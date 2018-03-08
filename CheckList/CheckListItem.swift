@@ -7,3 +7,17 @@
 //
 
 import Foundation
+
+class CheckListItem {
+    var text: String
+    var checked: Bool
+    
+    init(text: String, checked: Bool = false) {
+        self.text = text
+        self.checked = checked
+    }
+    
+    func toggleChecked() -> Void {
+        checked = !checked
+    }
+}
