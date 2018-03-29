@@ -9,6 +9,7 @@
 import UIKit
 
 class CheckListViewController: UITableViewController {
+        
     var itemList = Array<CheckListItem>()
 
     override func viewDidLoad() {
@@ -24,7 +25,8 @@ class CheckListViewController: UITableViewController {
     }
     
     func configureCheckmark(for cell: UITableViewCell, withItem item: CheckListItem) {
-        cell.accessoryType = (item.checked) ? .checkmark : .none
+        let myCell = cell as! ChecklistItemCell
+        myCell.itemChecked.isHidden = (item.checked) ? false : true
     }
     
     func configureText(for cell: UITableViewCell, withItem item: CheckListItem){
@@ -60,6 +62,28 @@ class CheckListViewController: UITableViewController {
     @IBAction func addDummyTodo(_ sender: Any) {
         itemList.append(CheckListItem(text: "New item"))
         tableView.reloadData()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addItem" {
+            let navVC = segue.destination as! UINavigationController
+            let destVC = navVC.topViewController as! AddItemViewController
+            destVC.delegate = self as AddItemViewControllerDelegate
+        }
+    }
+}
+
+// MARK: - AddItemViewControllerDelegate
+extension CheckListViewController: AddItemViewControllerDelegate {
+    
+    func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
+        dismiss(animated: true)
+    }
+    
+    func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: CheckListItem) {
+        itemList.append(item)
+        tableView.reloadData()
+        dismiss(animated: true)
     }
 }
 

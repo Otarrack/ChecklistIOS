@@ -10,14 +10,15 @@ import UIKit
 
 class AddItemViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var itemNameText: UITextField!
+    var delegate: AddItemViewControllerDelegate?
+
     
     @IBAction func done() {
-        print(itemNameText)
-        dismiss(animated: true, completion: nil)
+        delegate?.addItemViewController(self, didFinishAddingItem: CheckListItem(text: itemNameText.text!))
     }
 
     @IBAction func cancel() {
-        dismiss(animated: true, completion: nil)
+        delegate?.addItemViewControllerDidCancel(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -42,4 +43,15 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
         }
         return true
     }
+    
+    
+    func itemToEdit () -> CheckListItem {
+        
+    }
+
+}
+
+protocol AddItemViewControllerDelegate : class {
+    func addItemViewControllerDidCancel(_ controller: AddItemViewController)
+    func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: CheckListItem)
 }
