@@ -30,7 +30,8 @@ class CheckListViewController: UITableViewController {
     }
     
     func configureText(for cell: UITableViewCell, withItem item: CheckListItem){
-        cell.textLabel?.text = item.text
+        let myCell = cell as! ChecklistItemCell
+        myCell.itemName.text = item.text
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -70,6 +71,13 @@ class CheckListViewController: UITableViewController {
             let destVC = navVC.topViewController as! AddItemViewController
             destVC.delegate = self as AddItemViewControllerDelegate
         }
+        if segue.identifier == "editItem" {
+            let destination = segue.destination as! UINavigationController
+            let targetController = destination.topViewController as! AddItemViewController
+            let index = tableView.indexPath(for: sender as! ChecklistItemCell)!
+            targetController.itemToEdit = itemList[index.row]
+            targetController.delegate = self
+        }
     }
 }
 
@@ -77,13 +85,20 @@ class CheckListViewController: UITableViewController {
 extension CheckListViewController: AddItemViewControllerDelegate {
     
     func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
-        dismiss(animated: true)
+        controller.dismiss(animated: true)
     }
     
     func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: CheckListItem) {
         itemList.append(item)
         tableView.reloadData()
-        dismiss(animated: true)
+        controller.dismiss(animated: true)
+    }
+    
+    func addItemViewController(_ controller: AddItemViewController, didFinishEditingItem item: CheckListItem) {
+        let index = itemList.index(where:{ $0 === item })!
+        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        controller.dismiss(animated: true)
+        
     }
 }
 

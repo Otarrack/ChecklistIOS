@@ -11,10 +11,23 @@ import UIKit
 class AddItemViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var itemNameText: UITextField!
     var delegate: AddItemViewControllerDelegate?
+    var itemToEdit: CheckListItem?
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if let itemToEdit = itemToEdit {
+            itemNameText.text = itemToEdit.text
+            navigationItem.title = "Edit Item"
+        }
+    }
     
     @IBAction func done() {
-        delegate?.addItemViewController(self, didFinishAddingItem: CheckListItem(text: itemNameText.text!))
+        if let itemToEdit = itemToEdit {
+            itemToEdit.text = itemNameText.text!
+            delegate?.addItemViewController(self, didFinishEditingItem: itemToEdit)
+        } else {
+            delegate?.addItemViewController(self, didFinishAddingItem: CheckListItem(text: itemNameText.text!))
+        }
     }
 
     @IBAction func cancel() {
@@ -43,15 +56,11 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
         }
         return true
     }
-    
-    
-    func itemToEdit () -> CheckListItem {
-        
-    }
 
 }
 
 protocol AddItemViewControllerDelegate : class {
     func addItemViewControllerDidCancel(_ controller: AddItemViewController)
     func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: CheckListItem)
+    func addItemViewController(_ controller: AddItemViewController, didFinishEditingItem item: CheckListItem)
 }
